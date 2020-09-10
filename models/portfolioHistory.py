@@ -16,6 +16,9 @@ class PortfolioHistory(Base):
    netPosition = Column( FLOAT )
    date = Column( DATETIME )
 
+   def __str__(self):
+       return f'{self.date} { self.totalInvested}'
+
 
 
 # from dbconnect import getEngine

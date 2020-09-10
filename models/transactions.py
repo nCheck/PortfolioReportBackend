@@ -17,7 +17,12 @@ class Transactions(Base):
    price = Column( FLOAT )
    timestamp = Column( DATETIME )
    settleDate = Column( DATETIME )
-   brockerCode = Column( String(100) )
+   brokerCode = Column( String(100) )
+   action = Column( String(100) )
+
+
+   def __str__(self):
+       return self.ticker + " " + str(self.quantity) + " " + str( self.price ) + " " + str( self.timestamp ) + " " + self.action
 
 
 
