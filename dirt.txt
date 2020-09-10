@@ -1,0 +1,5 @@
+ClientId
+Total Invested
+Net Position
+RealisedProfit
+Date
