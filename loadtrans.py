@@ -41,8 +41,6 @@ def loadtrans():
 
         trans.append(t)
 
-        if index == 50:
-            break
 
 
 

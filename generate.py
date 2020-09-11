@@ -224,7 +224,7 @@ def genFullData():
                              CurrentPortfolio.quantity: _net_quantity , CurrentPortfolio.averagePrice: new_averagePrice
                          } , synchronize_session = False )
 
-                    print("updating==========")
+                    # print("updating==========")
 
                 except :
 
