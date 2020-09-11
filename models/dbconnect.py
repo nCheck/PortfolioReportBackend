@@ -8,7 +8,8 @@ def getEngine():
     db = 'TEST'
     dbpath = f'mysql://{username}:{password}@{url}/{db}'
 
-    engine = create_engine( dbpath , echo = True)
+    # engine = create_engine( dbpath , echo = True)
+    engine = create_engine( dbpath , echo = False)
 
     return engine
 

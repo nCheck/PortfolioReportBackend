@@ -8,7 +8,24 @@ import pandas as pd
 import requests
 
 
+#custom
 
+#orm models
+from models.transactions import Transactions
+from models.currentPortfolio import CurrentPortfolio
+from models.portfolioHistory import PortfolioHistory
+from models.dbconnect import getEngine
+
+from ltp import lastTradedPrice , getISIN
+
+#inbuilt
+from sqlalchemy.orm import sessionmaker
+import datetime
+from random import randint
+
+engine = getEngine()
+Session = sessionmaker(bind = engine)
+session = Session()
 
 
 app = flask.Flask(__name__)
@@ -18,12 +35,22 @@ cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 
+@app.route('/', methods=['GET','POST'])
+def home():
+    return "Welcome To My App"
 
 
-
+#sample db test
 
 @app.route('/test', methods=['GET','POST'])
 def test():
-    print(prof.head())
-    data = [ 1 , 2 , "Buckle My Shoe" , 3 , 4 , "Shut the Door" ]
-    return jsonify( data )
+
+    stocks = session.query(Transactions.ticker).filter(Transactions.typeOfInstrument == 'STOCK').distinct()
+    res = { "Our Stocks" : list(stocks) }
+    return jsonify( res )
+
+
+
+
+
+app.run(port=3000)

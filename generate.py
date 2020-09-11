@@ -3,7 +3,7 @@ from models.transactions import Transactions
 from models.currentPortfolio import CurrentPortfolio
 from models.portfolioHistory import PortfolioHistory
 from models.dbconnect import getEngine
-from ltp import lastTradedPrice
+from ltp import lastTradedPrice , getISIN
 
 #inbuilt
 from sqlalchemy.orm import sessionmaker
@@ -142,10 +142,10 @@ def genFullData():
     clients = session.query(Transactions.clientId).filter(Transactions.typeOfInstrument == 'STOCK').distinct()
     clients = list(map( lambda x : x[0] , clients))
 
-    dates = []
+    dates = session.query(Transactions.timestamp).filter(Transactions.typeOfInstrument == 'STOCK').distinct()
 
-    for i in range(1,10):
-        dates.append( datetime.datetime(2020,9,i) )
+    # for i in range(1,10):
+    #     dates.append( datetime.datetime(2020,9,i) )
 
 
     for date in dates:
@@ -233,6 +233,8 @@ def genFullData():
                     _realisedProfit = (buy_price*sell_qnt) - (sell_price * sell_qnt)
                     _totalInvested = ( buy_price*_net_quantity   )
                     _netPosition = ( _ltp * _net_quantity )
+                    
+                    print(_net_quantity , stock ,_totalInvested , _netPosition )
 
                     if _net_quantity != 0:
 
@@ -278,13 +280,9 @@ def genFullData():
 
 
 
-def checkExist():
 
-    sht = session.query(Transactions.ticker).filter(Transactions.typeOfInstrument == 'COMODI').scalar()
-    print("dd",sht,"sd")
-    if sht is None:
-        print("sht")
+
 
 
 # checkExist()
-# genFullData()
+genFullData()
