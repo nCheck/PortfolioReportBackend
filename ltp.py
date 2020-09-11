@@ -1,13 +1,18 @@
 from random import randint
+from datetime import datetime
+import pandas as pd
 
+npd = pd.read_csv('dataset/realval.csv')
+npd['timestamp'] = pd.to_datetime(npd['timestamp'])
 
-def lastTradedPrice(stock , curPrice=0.0):
+def lastTradedPrice(stock , curPrice=0.0 , date = datetime.now()):
 
-    chngs = [ -20.0 , -10.0 , 3.0 , 4.0 , 10.0 , 25.0 , 60.0 , -50.0 ]
-    n = len(chngs)
-    dif = chngs[ randint(1,55477) % n ]
+    date = date[0]
+    # print(stock , date )
 
-    return curPrice + dif
+    f1 = npd[npd['timestamp'] == date ]
+    
+    return float(f1[ npd['ticker'] == stock ].Close)
 
 
 
@@ -23,3 +28,5 @@ def getISIN(stock):
     return isinlist[stock]
 
 
+
+# print(lastTradedPrice('KO' , 0,  datetime(2019, 1, 2, 0, 0)))

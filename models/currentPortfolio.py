@@ -15,7 +15,7 @@ class CurrentPortfolio(Base):
    ticker = Column( String(100) )
    quantity = Column( FLOAT )
    clientId = Column(String(100))
-   averagePrice = Column( FLOAT )
+   averagePrice = Column( FLOAT(precision=2) )
 
 
 

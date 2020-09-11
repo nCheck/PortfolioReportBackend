@@ -148,7 +148,7 @@ def genFullData():
     #     dates.append( datetime.datetime(2020,9,i) )
 
 
-    for date in dates:
+    for date in dates[:50]:
 
         results = session.query(Transactions).filter(Transactions.timestamp == date)
 
@@ -199,7 +199,7 @@ def genFullData():
                 buy_qnt = stockmap_b[stock]['quantity']
                 sell_price = stockmap_s[stock]['averagePrice']
                 sell_qnt = stockmap_s[stock]['quantity']
-                _ltp = lastTradedPrice(stock , buy_price)
+                _ltp = lastTradedPrice(stock , buy_price , date)
 
                 try : 
                     current_stock_port = session.query(CurrentPortfolio).filter( CurrentPortfolio.ticker == stock 
@@ -209,19 +209,20 @@ def genFullData():
                     cur_price = current_stock_port.averagePrice
 
                     _net_quantity =  cur_qnt + buy_qnt - sell_qnt
-                    _realisedProfit =  ( cur_qnt*cur_price ) + (buy_price*sell_qnt) - (sell_price * sell_qnt)
+                    # _realisedProfit =  ( cur_qnt*cur_price ) + (buy_price*sell_qnt) - (sell_price * sell_qnt)
 
                     new_averagePrice = cur_price
 
                     if _net_quantity > cur_qnt :
                         dif = _net_quantity - cur_qnt
-                        new_averagePrice = ( ( cur_price*cur_qnt ) + ( buy_price * dif ) ) / dif
+                        new_averagePrice = ( ( cur_price*cur_qnt ) + ( buy_price * dif ) ) / _net_quantity
 
-                    _netPosition = _ltp * _net_quantity
+                    # _netPosition = _ltp * _net_quantity
+                    # print("updating" , stock , " current ", buy_price , " old price ", cur_price , " new price ", new_averagePrice)
 
                     session.query( CurrentPortfolio ).filter( CurrentPortfolio.ticker == stock
                          , CurrentPortfolio.clientId == client).update( {
-                             CurrentPortfolio.quantity: _net_quantity , CurrentPortfolio.averagePrice: new_averagePrice
+                             CurrentPortfolio.quantity: _net_quantity , CurrentPortfolio.averagePrice: round( new_averagePrice , 2 )
                          } , synchronize_session = False )
 
                     # print("updating==========")
@@ -232,14 +233,13 @@ def genFullData():
                     _net_quantity = buy_qnt - sell_qnt
                     _realisedProfit = (buy_price*sell_qnt) - (sell_price * sell_qnt)
                     _totalInvested = ( buy_price*_net_quantity   )
-                    _netPosition = ( _ltp * _net_quantity )
+                    # _netPosition = ( _ltp * _net_quantity )
                     
-                    print(_net_quantity , stock ,_totalInvested , _netPosition )
 
                     if _net_quantity != 0:
 
                         cp = CurrentPortfolio( typeOfInstrument='STOCK' , ticker=stock ,
-                                quantity=_net_quantity , clientId=client , averagePrice=buy_price )
+                                quantity=_net_quantity , clientId=client , averagePrice= round( buy_price , 2 )  )
                         
                         session.add(cp)
 
@@ -258,13 +258,13 @@ def genFullData():
                 ticker = cpf.ticker
                 quantity = cpf.quantity
                 averagePrice = cpf.averagePrice
-                _ltp = lastTradedPrice(ticker , averagePrice)
+                _ltp = lastTradedPrice(ticker , averagePrice , date)
 
-                totalInvested += quantity * averagePrice
-                netPosition +=  quantity * _ltp
+                totalInvested += (quantity * averagePrice)
+                netPosition +=  (quantity * _ltp)
 
 
-            cph = PortfolioHistory( clientId=client , totalInvested=totalInvested , netPosition=netPosition , date=date )
+            cph = PortfolioHistory( clientId=client , totalInvested= round( totalInvested , 2 ) , netPosition= round( netPosition , 2 ) , date=date )
             
             session.add(cph)
             session.commit()

@@ -12,8 +12,8 @@ class PortfolioHistory(Base):
    
    phid = Column(Integer, primary_key = True)
    clientId = Column(String(100))
-   totalInvested = Column( FLOAT )
-   netPosition = Column( FLOAT )
+   totalInvested = Column( FLOAT(precision=2) )
+   netPosition = Column( FLOAT(precision=2) )
    date = Column( DATETIME )
 
    def __str__(self):

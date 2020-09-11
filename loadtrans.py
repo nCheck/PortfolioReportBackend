@@ -42,6 +42,10 @@ def loadtrans():
         trans.append(t)
 
 
+        if index > 100:
+            break
+
+
 
 
     session.add_all(trans)
