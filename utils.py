@@ -163,7 +163,7 @@ def tabledata():
         bondName = session.query(BondDescrp.bondName).filter(BondDescrp.isin==row.isin).one()[0]
         bond_details_data.append({'name': bondName, 'quantity': quantity,'investment':current_investment, 'currentValuation':current_valuation ,'unrealizedPL': unrealized_PL })
     bond_summary = {'investment': total_bond_investment,'currentValuation': total_bond_valuation, 'unrealizedPL': total_bond_valuation-total_bond_investment }
-    res = [{'securityType': 'Equity', 'summaryData': stock_summary , 'detailsData' : stock_details_data},{'securityType': 'Bonds', 'summaryData': bond_summary, 'DetailsData' : bond_details_data}]
+    res = [{'securityType': 'Equity', 'summaryData': stock_summary , 'detailsData' : stock_details_data},{'securityType': 'Bonds', 'summaryData': bond_summary, 'detailsData' : bond_details_data}]
     return ( res )
 
 
@@ -182,7 +182,8 @@ def clienthistory():
         totalInvested.append( res.totalInvested )
         netPosition.append( res.netPosition )
         #convert to date
-        labels.append( res.date )
+        # dataname = res.date.strftime("%d %b %Y")
+        labels.append( str( res.date.date() ) )
 
     print(totalInvested)
     print(netPosition)
@@ -190,9 +191,9 @@ def clienthistory():
     datasets = { "netPosition" : netPosition , "totalInvested" : totalInvested }
     months = [ 'Jan' , 'Feb' , 'Mar' , 'Apr' , 'May' , 'June' , 'July' , 'Aug' , 'Sep'
                 , 'Oct' , 'Nov' , 'Dec' ]
-    # labels = [ 'Oct' , 'Nov' , 'Dec' , 'Jan' , 'Feb' , 'Mar'
-    #             , 'Apr' , 'May' , 'June' , 'July' , 'Aug' , 'Sep' ]
+    an_labels = [ 'Oct' , 'Nov' , 'Dec' , 'Jan' , 'Feb' , 'Mar'
+                , 'Apr' , 'May' , 'June' , 'July' , 'Aug' , 'Sep' ]
 
-    resp = { "datasets" : datasets, "labels" : labels }
+    resp = { "datasets" : datasets, "labels" : labels , "annual_labels" : an_labels }
 
     return resp

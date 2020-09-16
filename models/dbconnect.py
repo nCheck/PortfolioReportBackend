@@ -5,7 +5,7 @@ def getEngine():
     url = 'housestack.crzf2jqpqelj.us-east-2.rds.amazonaws.com'
     username = 'admin'
     password = 'housestack'
-    db = 'TEST'
+    db = 'TEST2'
     dbpath = f'mysql://{username}:{password}@{url}/{db}'
 
     # engine = create_engine( dbpath , echo = True)

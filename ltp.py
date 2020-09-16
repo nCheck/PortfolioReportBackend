@@ -19,7 +19,7 @@ def isBond( name ):
 
 def lastTradedPrice(stock , curPrice=0.0 , date = datetime.now() , type = 'BOND'):
 
-    print(stock , date , curPrice)
+    # print(stock , date , curPrice)
 
     if isBond(stock):
 
