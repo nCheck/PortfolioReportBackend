@@ -16,6 +16,7 @@ class PortfolioHistory(Base):
    netPosition = Column( FLOAT(precision=2) )
    date = Column( DATETIME )
 
+
    def __str__(self):
        return f'{self.date} { self.totalInvested}'
 

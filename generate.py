@@ -3,7 +3,7 @@ from models.transactions import Transactions
 from models.currentPortfolio import CurrentPortfolio
 from models.portfolioHistory import PortfolioHistory
 from models.dbconnect import getEngine
-from ltp import lastTradedPrice , getISIN
+from ltp import lastTradedPrice , getISIN , isBond
 
 #inbuilt
 from sqlalchemy.orm import sessionmaker
@@ -14,51 +14,18 @@ engine = getEngine()
 Session = sessionmaker(bind = engine)
 session = Session()
 
-#insert one data
-def test():
-
-    cp = PortfolioHistory( clientId = 'J001' , totalInvested = 785.1
-            , netPosition = 800.5 , date = datetime.datetime.now() )
-
-    session.add(cp)
-    session.commit()
 
 
-def gr():
-    return randint(1,122254)
+sdate = datetime.datetime(2019, 1, 2)   # start date
+edate = datetime.datetime(2020, 1, 31)   # end date
+
+delta = edate - sdate       # as timedelta
+DATES = []
+for i in range(delta.days + 1):
+    day = sdate + datetime.timedelta(days=i)
+    DATES.append(day)
 
 
-
-TICKERS = ['AAPL','TSLA','AMZN','CSCO','SYRS']
-
-#insert bulk data
-def insertTransaction():
-
-    trans = []
-
-    for i in range(1,10):
-
-        for j in range(3):
-            t = Transactions( clientId = 'J001' , typeOfInstrument = 'STOCK' , action = 'SELL'
-                        , isin='5001' , ticker= TICKERS[ gr()%5 ] , quantity=( 2 ) , price=( 200 - gr()%30 )
-                        , timestamp= datetime.datetime(2020,9,i) , brokerCode = 'NASDAQ' )
-            
-            trans.append(t)
-
-    session.add_all(trans)
-
-    session.commit()
-
-
-# insertTransaction()
-
-
-def getTransactions():
-
-    res = session.query(Transactions).filter(Transactions.timestamp == datetime.datetime(2020,9,1) )
-
-    for r in res:
-        print(r)
 
 
 def insertCurrentPortfolio(  typeOfInstrument , isin , ticker , quantity , clientId , averagePrice ):
@@ -71,84 +38,27 @@ def insertCurrentPortfolio(  typeOfInstrument , isin , ticker , quantity , clien
 
 
 
-def genCurrentPortfolioFullData():
-
-    # only stocks for now
-    # results = session.query(Transactions).filter(Transactions.typeOfInstrument == 'STOCK')
-    stocks = session.query(Transactions.ticker).filter(Transactions.typeOfInstrument == 'STOCK').distinct()
-    
-    stocks = list(map( lambda x : x[0] , stocks ))
-    
-
-    clients = session.query(Transactions.clientId).filter(Transactions.typeOfInstrument == 'STOCK').distinct()
-    clients = list(map( lambda x : x[0] , clients))
-
-    for client in clients:
-
-        stockmap_b = { stock : { 'averagePrice' : 0.0 , 'quantity' : 0.0 } for stock in stocks }
-        stockmap_s = { stock : { 'averagePrice' : 0.0 , 'quantity' : 0.0 } for stock in stocks }
-
-
-
-        # get all buy stocks of client
-        clientres = session.query(Transactions).filter(Transactions.typeOfInstrument == 'STOCK' ,
-                                            Transactions.clientId == client)
-
-            
-        for result in clientres:
-
-            price = result.price
-            quantity = result.quantity
-            stock = result.ticker
-
-            if result.action == 'BUY':
-
-                old_quantity = stockmap_b[stock]['quantity']
-                old_price = stockmap_b[stock]['averagePrice']
-                new_quantity = old_quantity + quantity
-                new_price = ( ( old_quantity*old_price ) + (quantity * price) ) / ( new_quantity )
-
-                stockmap_b[stock]['quantity'] = new_quantity
-                stockmap_b[stock]['averagePrice'] = new_price
-
-            else:
-
-                old_quantity = stockmap_s[stock]['quantity']
-                old_price = stockmap_s[stock]['averagePrice']
-                new_quantity = old_quantity + quantity
-                new_price = ( ( old_quantity*old_price ) + (quantity * price) ) / ( new_quantity )
-
-                stockmap_s[stock]['quantity'] = new_quantity
-                stockmap_s[stock]['averagePrice'] = new_price
-
-        
-
-
-        
-        print(stockmap_b)
-        print(stockmap_s)
 
 
 # genCurrentPortfolioFullData()
 
 def genFullData():
 
-    # only stocks for now
-    # results = session.query(Transactions).filter(Transactions.typeOfInstrument == 'STOCK')
 
-    stocks = session.query(Transactions.ticker).filter(Transactions.typeOfInstrument == 'STOCK').distinct()
+
+    stocks = session.query(Transactions.ticker).filter().distinct()
     stocks = list(map( lambda x : x[0] , stocks ))
     
-    clients = session.query(Transactions.clientId).filter(Transactions.typeOfInstrument == 'STOCK').distinct()
+    clients = session.query(Transactions.clientId).filter().distinct()
     clients = list(map( lambda x : x[0] , clients))
 
-    dates = session.query(Transactions.timestamp).filter(Transactions.typeOfInstrument == 'STOCK').distinct()
+    dates = DATES
 
     # for i in range(1,10):
     #     dates.append( datetime.datetime(2020,9,i) )
 
 
-    for date in dates[:50]:
+    for date in dates[:60]:
 
         results = session.query(Transactions).filter(Transactions.timestamp == date)
 
@@ -199,9 +109,11 @@ def genFullData():
                 buy_qnt = stockmap_b[stock]['quantity']
                 sell_price = stockmap_s[stock]['averagePrice']
                 sell_qnt = stockmap_s[stock]['quantity']
+           
                 _ltp = lastTradedPrice(stock , buy_price , date)
 
                 try : 
+
                     current_stock_port = session.query(CurrentPortfolio).filter( CurrentPortfolio.ticker == stock 
                                                         , CurrentPortfolio.clientId == client ).one()
 
@@ -209,7 +121,7 @@ def genFullData():
                     cur_price = current_stock_port.averagePrice
 
                     _net_quantity =  cur_qnt + buy_qnt - sell_qnt
-                    # _realisedProfit =  ( cur_qnt*cur_price ) + (buy_price*sell_qnt) - (sell_price * sell_qnt)
+
 
                     new_averagePrice = cur_price
 
@@ -217,8 +129,6 @@ def genFullData():
                         dif = _net_quantity - cur_qnt
                         new_averagePrice = ( ( cur_price*cur_qnt ) + ( buy_price * dif ) ) / _net_quantity
 
-                    # _netPosition = _ltp * _net_quantity
-                    # print("updating" , stock , " current ", buy_price , " old price ", cur_price , " new price ", new_averagePrice)
 
                     session.query( CurrentPortfolio ).filter( CurrentPortfolio.ticker == stock
                          , CurrentPortfolio.clientId == client).update( {
@@ -238,8 +148,13 @@ def genFullData():
 
                     if _net_quantity != 0:
 
-                        cp = CurrentPortfolio( typeOfInstrument='STOCK' , ticker=stock ,
-                                quantity=_net_quantity , clientId=client , averagePrice= round( buy_price , 2 )  )
+                        typeOfInstrument = 'STOCK'
+
+                        if isBond(stock):
+                            typeOfInstrument='BOND'
+
+                        cp = CurrentPortfolio( typeOfInstrument=typeOfInstrument , ticker=stock ,
+                                quantity=_net_quantity , isin=getISIN(stock) , clientId=client , averagePrice= round( buy_price , 2 )  )
                         
                         session.add(cp)
 
@@ -272,17 +187,5 @@ def genFullData():
     
         
 
-                
 
-
-            
-
-
-
-
-
-
-
-
-# checkExist()
 genFullData()

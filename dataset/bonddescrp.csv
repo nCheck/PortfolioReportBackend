@@ -1,0 +1,7 @@
+bondName,issueDate,maturityDate,isin,parValue,coupon,Tenure,category
+MUFG Americas Holdings Corp,2019-01-12,2022-01-12,US-000402625-0,1000,3.5,3,Corporate Bond
+"American Campus Communities, Inc.",2019-05-04,2020-05-04,US-000409925-0,1000,4.125,1,Corporate Bond
+Sysco Corporation,2019-11-23,2022-11-23,US-000333625-0,1000,5.65,3,Corporate Bond
+GT10:GOV,2019-03-19,2029-03-19,US-000406665-0,99.44,0.63,10,Government Bonds
+GT5:GOV,2018-12-17,2023-12-17,US-000202625-0,99.9,0.27,5,Government Bonds
+GTII10:GOV,2020-04-11,2030-04-11,US-000802625-0,111.95,0.13,10,Government Bonds

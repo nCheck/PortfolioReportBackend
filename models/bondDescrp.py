@@ -16,6 +16,7 @@ class BondDescrp(Base):
    coupon = Column( FLOAT )
    issueDate = Column( DATETIME )
    maturityDate = Column( DATETIME )
+   tenure = Column( FLOAT )
 
 
 

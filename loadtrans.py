@@ -20,7 +20,7 @@ session = Session()
 
 
 
-def loadtrans():
+def loadStocktrans():
 
     trans = []
     for index, row in df.iterrows():
@@ -41,24 +41,50 @@ def loadtrans():
 
         trans.append(t)
 
+        # print("updating ", t)
 
-        if index > 100:
+        if index > 150:
             break
-
-
 
 
     session.add_all(trans)
 
     session.commit()
 
-loadtrans()
+
+loadStocktrans()
 
 
-def getDates():
-    dates = session.query(Transactions.timestamp).filter(Transactions.typeOfInstrument == 'STOCK').distinct()
-    for d in dates:
-        print(d)
+bf = pd.read_csv('dataset/bonddata.csv')
 
 
-# getDates()
+def loadBondtrans():
+
+    trans = []
+    for index, row in bf.iterrows():
+
+        clientId = 'J001'
+        typeOfInstrument = 'BOND'
+        action = str(row['action']).upper()
+        ticker = str(row['ticker']).strip().upper()
+
+        quantity = row['quantity']
+        price = row['price']
+        timestamp = datetime.datetime.strptime( row['timestamp'] , '%m/%d/%Y')
+        brockerCode = row['brockerCode']
+
+        t = Transactions( clientId = clientId , typeOfInstrument = typeOfInstrument , action = action
+                    , isin=getISIN(ticker) , ticker=ticker, quantity=quantity , price=price
+                    , timestamp=timestamp , brokerCode=brockerCode )
+
+        # print("getting ", t)
+        trans.append(t)
+
+
+    session.add_all(trans)
+
+    session.commit()
+
+loadBondtrans()
+
+
