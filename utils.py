@@ -54,7 +54,7 @@ def topthreecards():
     total_investment = 0
     max_unrealized_pl = 0
     max_gainer = ''
-    min_unrealized_pl = 0
+    min_unrealized_pl = 9999999
     max_loser = ''
     for row in stocks:
         current_market_price = (getPrice(str(row.ticker)))
@@ -135,11 +135,11 @@ def sectordistgraph():
         try :
             quantity = int(session.query(CurrentPortfolio.quantity).filter(CurrentPortfolio.isin==row.isin).one()[0])
             if row.category in sector_summary.keys():
-                bond_valuation = row.parValue+random.randrange(-10, 10, 1)*quantity
+                bond_valuation = (row.parValue+random.randrange(-10, 10, 1))*quantity
                 updated_value = sector_summary[row.category]+bond_valuation
                 sector_summary[row.category] = updated_value
             else:
-                bond_valuation = row.parValue+random.randrange(-10, 10, 1)*quantity
+                bond_valuation = (row.parValue+random.randrange(-10, 10, 1))*quantity
                 sector_summary[row.category] = bond_valuation
             total_value = total_value+bond_valuation
         except :
