@@ -169,16 +169,20 @@ def tabledata():
 
 
 
+# NEHAL will do the changes here
 def clienthistory():
 
     result = session.query( PortfolioHistory ).order_by( PortfolioHistory.date.asc() ).limit(365)
     totalInvested = []
     netPosition = []
+    labels = []
     
     for res in result:
         
         totalInvested.append( res.totalInvested )
         netPosition.append( res.netPosition )
+        #convert to date
+        labels.append( res.date )
 
     print(totalInvested)
     print(netPosition)
@@ -186,8 +190,8 @@ def clienthistory():
     datasets = { "netPosition" : netPosition , "totalInvested" : totalInvested }
     months = [ 'Jan' , 'Feb' , 'Mar' , 'Apr' , 'May' , 'June' , 'July' , 'Aug' , 'Sep'
                 , 'Oct' , 'Nov' , 'Dec' ]
-    labels = [ 'Oct' , 'Nov' , 'Dec' , 'Jan' , 'Feb' , 'Mar'
-                , 'Apr' , 'May' , 'June' , 'July' , 'Aug' , 'Sep' ]
+    # labels = [ 'Oct' , 'Nov' , 'Dec' , 'Jan' , 'Feb' , 'Mar'
+    #             , 'Apr' , 'May' , 'June' , 'July' , 'Aug' , 'Sep' ]
 
     resp = { "datasets" : datasets, "labels" : labels }
 
