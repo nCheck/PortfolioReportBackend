@@ -43,8 +43,8 @@ def loadStocktrans():
 
         # print("updating ", t)
 
-        if index > 150:
-            break
+        # if index > 150:
+        #     break
 
 
     session.add_all(trans)

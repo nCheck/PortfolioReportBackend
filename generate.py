@@ -17,7 +17,7 @@ session = Session()
 
 
 sdate = datetime.datetime(2019, 1, 2)   # start date
-edate = datetime.datetime(2020, 1, 31)   # end date
+edate = datetime.datetime(2020, 9, 16)   # end date
 
 delta = edate - sdate       # as timedelta
 DATES = []
@@ -58,7 +58,7 @@ def genFullData():
     #     dates.append( datetime.datetime(2020,9,i) )
 
 
-    for date in dates[:60]:
+    for date in dates:
 
         results = session.query(Transactions).filter(Transactions.timestamp == date)
 

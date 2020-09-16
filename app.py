@@ -16,7 +16,7 @@ from models.currentPortfolio import CurrentPortfolio
 from models.portfolioHistory import PortfolioHistory
 from models.dbconnect import getEngine
 
-from utils import topthreecards , securitydistgraph , sectordistgraph , tabledata
+from utils import topthreecards , securitydistgraph , sectordistgraph , tabledata , clienthistory
 from ltp import lastTradedPrice , getISIN
 
 #inbuilt
@@ -59,9 +59,10 @@ def api():
     _securitydistgraph = securitydistgraph()
     _sectordistgraph = sectordistgraph()
     _tabledata = tabledata()
+    _clienthistory = clienthistory()
 
     resp = { "TopThreeCards" : _topthreecards , "SecurityDistGraph" : _securitydistgraph ,
-             "SectorDistGraph" : _sectordistgraph , "TableData" : _tabledata  }
+             "SectorDistGraph" : _sectordistgraph , "TableData" : _tabledata, "ClientHistory": _clienthistory  }
 
 
     return jsonify( resp )

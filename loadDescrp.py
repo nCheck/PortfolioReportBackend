@@ -73,4 +73,4 @@ def loadBondDescrp():
     session.commit()
 
 
-# loadBondDescrp()
+loadBondDescrp()

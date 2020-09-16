@@ -165,3 +165,30 @@ def tabledata():
     bond_summary = {'investment': total_bond_investment,'currentValuation': total_bond_valuation, 'unrealizedPL': total_bond_valuation-total_bond_investment }
     res = [{'securityType': 'Equity', 'summaryData': stock_summary , 'detailsData' : stock_details_data},{'securityType': 'Bonds', 'summaryData': bond_summary, 'DetailsData' : bond_details_data}]
     return ( res )
+
+
+
+
+def clienthistory():
+
+    result = session.query( PortfolioHistory ).order_by( PortfolioHistory.date.asc() ).limit(365)
+    totalInvested = []
+    netPosition = []
+    
+    for res in result:
+        
+        totalInvested.append( res.totalInvested )
+        netPosition.append( res.netPosition )
+
+    print(totalInvested)
+    print(netPosition)
+
+    datasets = { "netPosition" : netPosition , "totalInvested" : totalInvested }
+    months = [ 'Jan' , 'Feb' , 'Mar' , 'Apr' , 'May' , 'June' , 'July' , 'Aug' , 'Sep'
+                , 'Oct' , 'Nov' , 'Dec' ]
+    labels = [ 'Oct' , 'Nov' , 'Dec' , 'Jan' , 'Feb' , 'Mar'
+                , 'Apr' , 'May' , 'June' , 'July' , 'Aug' , 'Sep' ]
+
+    resp = { "datasets" : datasets, "labels" : labels }
+
+    return resp

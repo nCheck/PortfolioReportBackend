@@ -120,4 +120,26 @@ def test2():
 
     print(res)
 
-test2()
+
+
+def getHistory():
+
+    result = session.query( PortfolioHistory ).order_by( PortfolioHistory.date.asc() ).limit(365)
+    totalInvested = []
+    netPosition = []
+    
+    for res in result:
+        
+        totalInvested.append( res.totalInvested )
+        netPosition.append( res.netPosition )
+
+    print(totalInvested)
+    print(netPosition)
+
+    resp = { "netPosition" : netPosition , "totalInvested" : totalInvested }
+
+    return resp
+
+
+
+getHistory()
