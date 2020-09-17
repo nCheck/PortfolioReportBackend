@@ -1,6 +1,6 @@
 import flask
 import os
-from flask import jsonify, request
+from flask import jsonify, request , send_from_directory
 from flask import flash, redirect, url_for, session
 from flask_cors import CORS, cross_origin
 import requests, json
@@ -73,10 +73,10 @@ def api():
 
 
 @app.route('/pdf', methods=['GET', 'POST'])
-def download(filename):
+def download():
     getPdf()
-    uploads = os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'])
-    return send_from_directory(directory=uploads, filename=filename)
+    uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+    return send_from_directory(directory=uploads, filename='portfolio.pdf')
 
 if __name__ == '__main__':
     app.run()
