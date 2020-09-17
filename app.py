@@ -72,7 +72,7 @@ def api():
 
 
 
-@app.route('/pdf', methods=['GET', 'POST'])
+@app.route('/portfolio.pdf', methods=['GET', 'POST'])
 def download():
     getPdf()
     uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
