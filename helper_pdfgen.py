@@ -202,8 +202,8 @@ def getPdf():
 
     bondTrades= resp['bondTrades']
 
-    URPL = Valuation - Investment
-    perURPL = URPL*100 / ( Valuation )
+    URPL = rd(Valuation - Investment )
+    perURPL = rd( URPL*100 / ( Valuation ) )
     #Page 5 data
     net_position=[
             ['Total Portfolio','','','','','', Investment , Valuation , URPL , perURPL ,'100%','100%']
