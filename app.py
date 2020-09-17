@@ -18,6 +18,7 @@ from models.dbconnect import getEngine
 
 from utils import topthreecards , securitydistgraph , sectordistgraph , tabledata , clienthistory
 from ltp import lastTradedPrice , getISIN
+from helper_pdfgen import getPdf
 
 #inbuilt
 from sqlalchemy.orm import sessionmaker
@@ -28,9 +29,11 @@ engine = getEngine()
 Session = sessionmaker(bind = engine)
 session = Session()
 
+UPLOAD_FOLDER = 'uploads'
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = 'super secret key'
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
@@ -68,6 +71,12 @@ def api():
     return jsonify( resp )
 
 
+
+@app.route('/pdf', methods=['GET', 'POST'])
+def download(filename):
+    getPdf()
+    uploads = os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'])
+    return send_from_directory(directory=uploads, filename=filename)
 
 if __name__ == '__main__':
     app.run()

@@ -1,12 +1,43 @@
 from random import randint
 from datetime import datetime , timedelta
 import pandas as pd
+import requests, json
 
 npd = pd.read_csv('dataset/realval.csv')
 npd['timestamp'] = pd.to_datetime(npd['timestamp'])
 
 
 
+
+TICKER_CACHE = {}
+
+def getPrice(ticker):
+
+    if ticker in TICKER_CACHE.keys():
+        return TICKER_CACHE[ticker]
+
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization' : 'Token 24bc8b2483ff559f1ce6e535b5a7be14f44ef50e'
+        }
+    url = f'https://api.tiingo.com/tiingo/daily/{ticker}/prices'
+    requestResponse = requests.get(url, headers=headers)
+
+    TICKER_CACHE[ticker] = (requestResponse.json())[0]['close']
+
+    return TICKER_CACHE[ticker]
+
+#stub
+def getStockSector(stock):
+
+    if isBond(stock):
+        return "Government"
+
+
+    sec_stoc = {"TSLA": "Auto Manufacturers","BAC": "Finance","BA": "Aerospace" ,
+    "KO": "Beverage","AMZN": "Internet Retail", "NFLX": "Entertainment"}
+
+    return sec_stoc[stock]
 
 BONDS = [ 'MUFG/22', 'GT10:GOV' , 'ACC24' , 'GT5:GOV' , 'SYY22' , 'GTII10:GOV' ]
 
@@ -23,7 +54,7 @@ def lastTradedPrice(stock , curPrice=0.0 , date = datetime.now() , type = 'BOND'
 
     if isBond(stock):
 
-        vals = [ 5 , 10 , -5 , -10 , -2 , 2 ]
+        vals = [ 5 , 3 , 10 , -1 , -2 , 2 ]
         rn = randint(1,40) % len(vals)
         return curPrice + vals[rn]
 
@@ -31,13 +62,22 @@ def lastTradedPrice(stock , curPrice=0.0 , date = datetime.now() , type = 'BOND'
 
         f1 = npd[npd['timestamp'] == date ]
         
-        if len(f1) == 0:
-            date = date + timedelta(days=2)
+        print(f1[ npd['ticker'] == stock ].size, stock , "Sizee")
+
+
+        for i in range(1,10):
+
             f1 = npd[npd['timestamp'] == date ]
+            if f1.size == 0:
+                date = date + timedelta(days=i)
+            else:
+                break
+                
         
-        if len(f1) == 0:
-            return curPrice + 5
+        if f1.size == 0:
+            return getPrice(stock)
         else:
+            # print(f1.head() , stock)
             return float(f1[ npd['ticker'] == stock ].Close)
 
 

@@ -16,8 +16,8 @@ session = Session()
 
 
 
-sdate = datetime.datetime(2019, 1, 2)   # start date
-edate = datetime.datetime(2020, 9, 16)   # end date
+sdate = datetime.datetime(2020, 1, 11)   # start date
+edate = datetime.datetime(2020, 9, 10)   # end date
 
 delta = edate - sdate       # as timedelta
 DATES = []

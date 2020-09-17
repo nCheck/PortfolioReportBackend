@@ -72,6 +72,7 @@ def topthreecards():
     total_bond_valuation = 0
     for row in bonds:
         current_market_price = row.averagePrice+random.randrange(-10, 10, 1)
+        # current_market_price = lastTradedPrice( row.ticker , row.averagePrice )
         quantity = int(row.quantity)
         total_bond_valuation = total_bond_valuation+current_market_price*quantity
         total_investment = total_investment+(row.averagePrice*quantity)
@@ -167,7 +168,8 @@ def tabledata():
         unrealized_PL = current_valuation-current_investment
         total_stock_unrealized_pl = total_stock_unrealized_pl+unrealized_PL
         stockName = session.query(StockDescrp.stockName).filter(StockDescrp.isin==row.isin).one()[0]
-        stock_details_data.append({'name': stockName, 'quantity': quantity, 'investment': current_investment,'currentValuation': current_valuation, 'unrealizedPL': unrealized_PL })
+        stock_details_data.append({'name': stockName, 'quantity': quantity, 'investment': current_investment,
+                                    'ticker' : row.ticker  ,'currentValuation': current_valuation, 'unrealizedPL': unrealized_PL })
     bonds = session.query(CurrentPortfolio).filter(CurrentPortfolio.typeOfInstrument == 'BOND')
     total_bond_valuation = 0
     total_bond_investment = 0
@@ -183,7 +185,8 @@ def tabledata():
         unrealized_PL = current_valuation-current_investment
         total_bond_unrealized_pl = total_bond_unrealized_pl+unrealized_PL
         bondName = session.query(BondDescrp.bondName).filter(BondDescrp.isin==row.isin).one()[0]
-        bond_details_data.append({'name': bondName, 'quantity': quantity,'investment':current_investment, 'currentValuation':current_valuation ,'unrealizedPL': unrealized_PL })
+        bond_details_data.append({'name': bondName, 'quantity': quantity,'investment':current_investment, 
+                                    'ticker': row.ticker ,'currentValuation':current_valuation ,'unrealizedPL': unrealized_PL })
     total_unrealized_pl = total_bond_unrealized_pl+total_stock_unrealized_pl
     total_valuation = total_stock_valuation+total_bond_valuation
     stock_valuation_percentage = (total_stock_valuation/total_valuation)*100
@@ -202,9 +205,16 @@ def tabledata():
     return ( res )
 
 # NEHAL will do the changes here
+def rd_arr(arr):
+
+    for i in range( len(arr) ):
+        arr[i] = round( arr[i] , 3 )
+
+    return arr
+
 def clienthistory():
 
-    result = session.query( PortfolioHistory ).order_by( PortfolioHistory.date.asc() ).limit(365)
+    result = session.query( PortfolioHistory ).order_by( PortfolioHistory.date.desc() ).limit(365)
     totalInvested = []
     netPosition = []
     labels = []
@@ -217,10 +227,10 @@ def clienthistory():
         # dataname = res.date.strftime("%d %b %Y")
         labels.append( str( res.date.date() ) )
 
-    print(totalInvested)
-    print(netPosition)
+    # print(totalInvested)
+    # print(netPosition)
 
-    datasets = { "netPosition" : netPosition , "totalInvested" : totalInvested }
+    datasets = { "netPosition" : rd_arr(netPosition) , "totalInvested" : rd_arr(totalInvested) }
     months = [ 'Jan' , 'Feb' , 'Mar' , 'Apr' , 'May' , 'June' , 'July' , 'Aug' , 'Sep'
                 , 'Oct' , 'Nov' , 'Dec' ]
     an_labels = [ 'Oct' , 'Nov' , 'Dec' , 'Jan' , 'Feb' , 'Mar'
