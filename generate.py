@@ -16,8 +16,9 @@ session = Session()
 
 
 
-sdate = datetime.datetime(2020, 1, 11)   # start date
+sdate = datetime.datetime(2019, 1, 2)   # start date
 edate = datetime.datetime(2020, 9, 10)   # end date
+# edate = datetime.datetime(2020, 3, 1)   # end date
 
 delta = edate - sdate       # as timedelta
 DATES = []
@@ -122,6 +123,8 @@ def genFullData():
 
                     _net_quantity =  cur_qnt + buy_qnt - sell_qnt
 
+                    # print("try updation ", _net_quantity ,  cur_qnt , buy_qnt , sell_qnt)
+
 
                     new_averagePrice = cur_price
 
@@ -144,6 +147,8 @@ def genFullData():
                     _realisedProfit = (buy_price*sell_qnt) - (sell_price * sell_qnt)
                     _totalInvested = ( buy_price*_net_quantity   )
                     # _netPosition = ( _ltp * _net_quantity )
+
+                    # print("except first ", _net_quantity , buy_qnt , sell_qnt)
                     
 
                     if _net_quantity != 0:

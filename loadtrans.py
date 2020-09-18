@@ -25,6 +25,7 @@ def loadStocktrans():
     trans = []
     for index, row in df.iterrows():
 
+
         clientId = 'J001'
         typeOfInstrument = 'STOCK'
         action = str(row['action']).upper()

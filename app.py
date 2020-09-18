@@ -19,7 +19,7 @@ from models.dbconnect import getEngine
 from utils import topthreecards , securitydistgraph , sectordistgraph , tabledata , clienthistory
 from ltp import lastTradedPrice , getISIN
 from helper_pdfgen import getPdf
-
+from helper_excel import genexel
 #inbuilt
 from sqlalchemy.orm import sessionmaker
 import datetime
@@ -73,10 +73,17 @@ def api():
 
 
 @app.route('/portfolio.pdf', methods=['GET', 'POST'])
-def download():
+def downloadpdf():
     getPdf()
     uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
     return send_from_directory(directory=uploads, filename='portfolio.pdf')
+
+
+@app.route('/portfolio.xlsx', methods=['GET', 'POST'])
+def downloadexcel():
+    genexel()
+    uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+    return send_from_directory(directory=uploads, filename='portfolio.xlsx')
 
 if __name__ == '__main__':
     app.run()

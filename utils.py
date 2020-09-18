@@ -86,7 +86,7 @@ def topthreecards():
     total_valuation = total_stock_valuation+total_bond_valuation
     total_unrealized_pl = total_valuation-total_investment
     total_pl_percentage = (total_unrealized_pl/total_investment)*100
-    res = {'card1':{'field1': 'My investment','value1': total_investment, 'field2' :'My networth','value2':total_valuation},'card2':{'field1': 'Total Profit&Loss','value1': total_unrealized_pl,'field2': 'Total Profit&Loss%','value2': total_pl_percentage},'card3':{'field1': 'Max Gainer','value1': max_gainer,'field2': 'Max Loser','value2': max_loser}}
+    res = {'card1':{'field1': 'My investment','value1': total_investment, 'field2' :'My networth','value2':total_valuation},'card2':{'field1': 'Total Profit/Loss','value1': total_unrealized_pl,'field2': 'Total Profit/Loss (%)','value2': total_pl_percentage},'card3':{'field1': 'Max Gainer','value1': max_gainer,'field2': 'Max Loser','value2': max_loser}}
     return (res)
 
 

@@ -206,7 +206,7 @@ def getPdf():
     perURPL = rd( URPL*100 / ( Valuation ) )
     #Page 5 data
     net_position=[
-            ['Total Portfolio','','','','','', Investment , Valuation , URPL , perURPL ,'100%','100%']
+            ['Total Portfolio','','','','','', rd(Investment) , rd(Valuation) , URPL , perURPL ,'100%','100%']
         ]
 
     generatePDF(FI,Equity,Investment,Valuation,monthlyInv,monthlyVal,equityTrades,bondTrades,net_position,labels)
